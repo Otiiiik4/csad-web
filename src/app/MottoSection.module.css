@@ -1,0 +1,35 @@
+.motto {
+  padding: 120px 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.motto::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 50% 100%, rgba(251, 191, 36, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.text {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4.5vw, 3.8rem);
+  font-weight: 700;
+  color: white;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
+  position: relative;
+}
+
+.accent {
+  display: inline;
+  background: linear-gradient(135deg, var(--color-yellow) 0%, #f97316 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

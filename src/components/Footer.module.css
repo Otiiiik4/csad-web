@@ -1,0 +1,158 @@
+.footer {
+  position: relative;
+  border-top: 1px solid var(--color-border);
+  padding-top: 70px;
+  margin-top: 100px;
+  overflow: hidden;
+}
+
+.glow {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 600px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-yellow), transparent);
+  opacity: 0.6;
+}
+
+.inner {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 60px;
+  padding-bottom: 60px;
+}
+
+/* BRAND */
+.logo {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+.logoMark {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-yellow);
+  line-height: 1;
+}
+.logoText {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  letter-spacing: -0.02em;
+}
+.logoSub {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-text-dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-left: 4px;
+}
+
+.tagline {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+.contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+.contactItem:hover { color: var(--color-text); }
+.contactItem svg { flex-shrink: 0; opacity: 0.7; }
+
+/* LINKS */
+.linksTitle {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-dim);
+  margin-bottom: 16px;
+}
+
+.linksList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.link {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  transition: color 0.2s ease;
+}
+.link:hover { color: var(--color-text); }
+
+/* ADDRESS */
+.addressBlock {
+  font-style: normal;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+.addressBlock strong { color: var(--color-text); }
+
+.hours {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+.hoursLabel {
+  font-weight: 700;
+  color: var(--color-text-dim);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.adminLink {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 0.75rem;
+  color: var(--color-text-dim);
+  opacity: 0.4;
+  transition: opacity 0.2s ease;
+}
+.adminLink:hover { opacity: 1; }
+
+/* BOTTOM */
+.bottom {
+  border-top: 1px solid var(--color-border);
+  padding: 20px 0;
+  font-size: 0.8rem;
+  color: var(--color-text-dim);
+}
+
+@media (max-width: 900px) {
+  .inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+  .brand { grid-column: 1 / -1; }
+}
+
+@media (max-width: 600px) {
+  .inner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}

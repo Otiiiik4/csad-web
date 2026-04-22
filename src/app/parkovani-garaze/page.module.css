@@ -1,0 +1,73 @@
+.wrapper { padding: 70px 0 100px; }
+
+.intro {
+  text-align: center; font-size: 1.1rem; color: var(--color-text-muted);
+  max-width: 680px; margin: 0 auto 60px; line-height: 1.7;
+}
+
+.priceGrid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 80px;
+}
+
+.priceCard {
+  padding: 36px 28px; display: flex; flex-direction: column; align-items: center;
+  text-align: center; gap: 10px;
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s, border-color 0.4s;
+}
+.priceCard:hover {
+  transform: translateY(-6px); box-shadow: var(--shadow-card-hover); border-color: var(--color-border-hover);
+}
+
+.pIcon { font-size: 2.8rem; }
+.pLabel { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: white; }
+.pSub { font-size: 0.9rem; color: var(--color-yellow); font-weight: 700; text-transform: uppercase; }
+.pDesc { font-size: 0.88rem; color: var(--color-text-muted); line-height: 1.55; margin: 8px 0; flex: 1; }
+.pPrice { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: auto; }
+
+.sectionTitle {
+  font-family: var(--font-display); font-size: 2.2rem; font-weight: 700; color: white;
+  text-align: center; margin-bottom: 32px;
+}
+
+/* Garáž cinematic card */
+.garazBox {
+  position: relative; overflow: hidden; padding: 56px 48px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+}
+.garazBg {
+  position: absolute; inset: 0; background-size: cover; background-position: center;
+  opacity: 0.3; transition: transform 0.7s ease, opacity 0.3s;
+}
+.garazBox:hover .garazBg { transform: scale(1.04); opacity: 0.4; }
+
+.garazContent {
+  position: relative; z-index: 2; display: flex;
+  justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 30px;
+}
+
+.garazInfo h3 { font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; color: white; margin-bottom: 20px; }
+.garazList { list-style: none; color: #ddd; display: flex; flex-direction: column; gap: 10px; font-size: 1rem; }
+.garazList li::before { content: '✓ '; color: var(--color-yellow); font-weight: 700; }
+
+.garazPrice {
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md);
+  padding: 32px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+
+.upcoming {
+  margin-top: 60px; padding: 40px; text-align: center;
+  border: 1px dashed var(--color-border); border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+.upcoming h3 { color: white; margin-bottom: 12px; font-size: 1.2rem; }
+.upcoming p { color: var(--color-text-muted); font-size: 0.95rem; line-height: 1.6; }
+.emailLink { display: inline-block; margin-top: 14px; color: var(--color-yellow); font-weight: 700; font-size: 0.95rem; transition: color 0.2s; }
+.emailLink:hover { color: var(--color-yellow-hover); }
+
+@media (max-width: 900px) {
+  .priceGrid { grid-template-columns: 1fr; }
+  .garazContent { flex-direction: column; }
+  .garazPrice { width: 100%; box-sizing: border-box; }
+}

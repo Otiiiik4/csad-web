@@ -1,0 +1,74 @@
+.wrapper { padding: 70px 0 100px; }
+
+.flickerPink { color: var(--color-pink); animation: flicker 3s infinite alternate; }
+
+.headerRow {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 24px; flex-wrap: wrap; margin-bottom: 40px;
+}
+
+.sectionTitle {
+  font-family: var(--font-display); font-size: 2rem; font-weight: 700;
+  color: white; letter-spacing: -0.02em; margin-bottom: 10px;
+}
+
+.sectionSub { color: var(--color-text-muted); font-size: 1rem; }
+
+.pinkLink { color: var(--color-pink); font-weight: 700; transition: opacity 0.2s; }
+.pinkLink:hover { opacity: 0.8; }
+
+/* EVENTS */
+.eventsList { display: flex; flex-direction: column; gap: 16px; margin-bottom: 80px; }
+
+.eventCard {
+  display: flex; align-items: center; padding: 28px 32px; gap: 24px;
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s, border-color 0.4s;
+}
+.eventCard:hover {
+  transform: translateX(6px);
+  border-color: rgba(217, 70, 239, 0.4);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 1px 0 0 rgba(217,70,239,0.4);
+}
+
+.dateBox {
+  display: flex; flex-direction: column; align-items: center;
+  min-width: 110px; border-right: 1px solid var(--color-border);
+  padding-right: 24px; flex-shrink: 0;
+}
+.dateText { color: var(--color-pink); font-weight: 900; font-size: 1.2rem; letter-spacing: -0.02em; }
+.timeText { color: var(--color-text-dim); font-size: 0.85rem; font-weight: 600; margin-top: 4px; }
+
+.eventInfo { flex: 1; }
+.eventTitle { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: 6px; letter-spacing: -0.01em; }
+.eventStatus { color: var(--color-text-muted); font-size: 0.9rem; }
+
+.priceBox { text-align: right; min-width: 140px; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+.eventPrice { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: white; letter-spacing: -0.02em; }
+.ticketBtn {
+  display: inline-block; padding: 10px 18px;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  color: white; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 700;
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+.ticketBtn:hover { background: var(--color-pink); border-color: var(--color-pink); transform: translateY(-2px); box-shadow: 0 8px 20px var(--color-pink-glow); }
+
+.emptyState {
+  text-align: center; padding: 60px 40px;
+}
+.emptyState span { font-size: 2.5rem; display: block; margin-bottom: 16px; }
+.emptyState p { color: var(--color-text-muted); font-size: 1.1rem; margin: 6px 0; }
+
+/* INFO CARDS */
+.infoGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.infoCard { padding: 36px 28px; display: flex; flex-direction: column; gap: 14px; transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s, border-color 0.4s; }
+.infoCard:hover { transform: translateY(-4px); box-shadow: var(--shadow-card-hover); border-color: rgba(217,70,239,0.25); }
+.infoIcon { font-size: 2.2rem; }
+.infoTitle { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: white; }
+.infoDesc { color: var(--color-text-muted); font-size: 0.9rem; line-height: 1.6; }
+
+@media (max-width: 800px) {
+  .eventCard { flex-direction: column; text-align: center; }
+  .dateBox { border-right: none; border-bottom: 1px solid var(--color-border); width: 100%; padding-right: 0; padding-bottom: 14px; }
+  .priceBox { align-items: center; width: 100%; }
+  .infoGrid { grid-template-columns: 1fr; }
+}

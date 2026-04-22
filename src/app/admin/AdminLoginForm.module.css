@@ -1,0 +1,9 @@
+.form { display: flex; flex-direction: column; gap: 18px; text-align: left; }
+.btn {
+  width: 100%; background: var(--color-yellow); color: #000; border: none;
+  padding: 16px; font-family: var(--font-sans); font-weight: 800; font-size: 0.95rem;
+  letter-spacing: 0.05em; text-transform: uppercase; border-radius: var(--radius-sm);
+  cursor: pointer; margin-top: 6px; transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+.btn:hover:not(:disabled) { background: var(--color-yellow-hover); transform: translateY(-2px); box-shadow: var(--shadow-yellow); }
+.btn:disabled { background: #334155; color: #94a3b8; cursor: not-allowed; }

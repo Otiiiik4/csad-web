@@ -1,0 +1,15 @@
+.wrapper { padding: 70px 0 100px; }
+.intro { text-align: center; font-size: 1.1rem; color: var(--color-text-muted); max-width: 680px; margin: 0 auto 60px; line-height: 1.7; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 50px; }
+.card { padding: 36px 28px; display: flex; flex-direction: column; gap: 14px; transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s, border-color 0.4s; }
+.card:hover { transform: translateY(-5px); box-shadow: var(--shadow-card-hover); border-color: var(--color-border-hover); }
+.icon { font-size: 2.5rem; }
+.title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: white; }
+.list { list-style: none; display: flex; flex-direction: column; gap: 8px; color: var(--color-text-muted); font-size: 0.9rem; }
+.list li::before { content: '✓ '; color: var(--color-yellow); font-weight: 700; }
+.contactCard { padding: 36px; text-align: center; }
+.contactCard h3 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 12px; }
+.contactCard p { color: var(--color-text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 16px; }
+.tel { font-size: 1.5rem; font-weight: 800; color: var(--color-yellow); letter-spacing: -0.02em; transition: color 0.2s; }
+.tel:hover { color: var(--color-yellow-hover); }
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }

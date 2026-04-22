@@ -1,0 +1,14 @@
+.wrapper { padding: 70px 0 100px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-bottom: 50px; }
+.schoolCard { padding: 44px 36px; display: flex; flex-direction: column; gap: 18px; position: relative; border-top: 3px solid var(--accent, var(--color-yellow)); transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s; }
+.schoolCard:hover { transform: translateY(-6px); box-shadow: var(--shadow-card-hover); }
+.schoolBadge { display: inline-block; align-self: flex-start; padding: 5px 12px; border-radius: 100px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+.schoolName { font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; color: white; letter-spacing: -0.02em; }
+.schoolDesc { color: var(--color-text-muted); font-size: 0.95rem; line-height: 1.65; }
+.schoolCats { display: flex; flex-direction: column; gap: 10px; }
+.catItem { display: flex; align-items: center; gap: 10px; color: var(--color-text); font-size: 0.95rem; padding: 10px 14px; background: var(--color-surface); border-radius: var(--radius-sm); border: 1px solid var(--color-border); }
+.schoolContact { color: var(--color-text-muted); font-size: 0.88rem; padding-top: 14px; border-top: 1px solid var(--color-border); }
+.infoBox { padding: 40px; text-align: center; }
+.infoBox h3 { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: white; margin-bottom: 14px; }
+.infoBox p { color: var(--color-text-muted); font-size: 0.95rem; line-height: 1.6; max-width: 600px; margin: 0 auto; }
+@media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
