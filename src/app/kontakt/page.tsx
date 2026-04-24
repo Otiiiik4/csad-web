@@ -61,10 +61,10 @@ export default function KontaktPage() {
             {/* RIGHT — map */}
             <div className={styles.mapBox}>
               <iframe
-                src="https://maps.google.com/maps?q=CSAD+Rymarov+Zizkova+260&t=&z=17&ie=UTF8&iwloc=&output=embed"
+                src="https://maps.google.com/maps?q=Žižkova+260%2F21,+Rýmařov&t=&z=17&ie=UTF8&iwloc=&output=embed"
                 width="100%"
                 height="100%"
-                style={{ border: 0, minHeight: 500, borderRadius: 'var(--radius-md)', filter: 'grayscale(100%) invert(90%) contrast(1.1)' }}
+                style={{ border: 0, minHeight: 500, borderRadius: 'var(--radius-md)', filter: 'grayscale(100%) invert(100%) sepia(20%) hue-rotate(180deg) contrast(1.1)' }}
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"

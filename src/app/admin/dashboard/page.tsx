@@ -6,15 +6,7 @@ import { supabase } from '@/lib/supabase'
 import type { User } from '@supabase/supabase-js'
 import styles from './dashboard.module.css'
 
-// ---- Role detection ----
-const ROLES: Record<string, string> = {
-  'admin@csad.cz':       'admin',
-  'obsluha@csad.cz':     'obsluha',
-  'klub@csad.cz':        'klub',
-  'tisk@csad.cz':        'tisk',
-  'autoskola@csad.cz':   'autoskola',
-  'napojka@csad.cz':     'napojka',
-}
+// ---- Role names for UI ----
 
 const ROLE_NAMES: Record<string, string> = {
   admin:    'Šéfe',
@@ -45,6 +37,8 @@ export default function DashboardPage() {
   const [akce, setAkce] = useState<any[]>([])
   const [zpravy, setZpravy] = useState<any[]>([])
   const [tiskZakazky, setTiskZakazky] = useState<any[]>([])
+  const [napoje, setNapoje] = useState<any[]>([])
+  const [profily, setProfily] = useState<any[]>([])
   const [saveMsg, setSaveMsg] = useState('')
 
   const showMsg = (msg: string) => {
@@ -64,28 +58,37 @@ export default function DashboardPage() {
       if (g) setGaraze(g)
     }
     if (r === 'admin') {
-      const [{ data: ws }, { data: n }, { data: z }, { data: t }] = await Promise.all([
+      const [{ data: ws }, { data: n }, { data: z }, { data: t }, { data: pf }] = await Promise.all([
         supabase.from('web_status').select('*').order('nazev'),
         supabase.from('nastaveni').select('*').single(),
         supabase.from('zpravy').select('*').order('created_at', { ascending: false }),
         supabase.from('poptavky_tisk').select('*').order('created_at', { ascending: false }),
+        supabase.from('profiles').select('*').order('created_at', { ascending: false }),
       ])
       if (ws) setWebStatuses(ws)
       if (n) setNastaveni(n)
       if (z) setZpravy(z)
       if (t) setTiskZakazky(t)
+      if (pf) setProfily(pf)
     }
     if (['admin', 'klub'].includes(r)) {
       const { data: a } = await supabase.from('akce').select('*').order('id', { ascending: true })
       if (a) setAkce(a)
     }
+    if (['admin', 'napojka'].includes(r)) {
+      const { data: np } = await supabase.from('napoje').select('*').order('kategorie').order('nazev')
+      if (np) setNapoje(np)
+    }
   }, [])
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) { router.push('/admin'); return }
       setUser(user)
-      const r = ROLES[user.email ?? ''] ?? 'visitor'
+      
+      const { data } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+      const r = data?.role || 'user'
+      
       setRole(r)
       loadAll(r)
     })
@@ -99,6 +102,12 @@ export default function DashboardPage() {
   const toggleStatus = async (kod: string, current: boolean) => {
     await supabase.from('web_status').update({ aktivni: !current }).eq('kod', kod)
     setWebStatuses(prev => prev.map(s => s.kod === kod ? { ...s, aktivni: !current } : s))
+  }
+
+  const updateRole = async (id: string, newRole: string) => {
+    await supabase.from('profiles').update({ role: newRole }).eq('id', id)
+    setProfily(prev => prev.map(p => p.id === id ? { ...p, role: newRole } : p))
+    showMsg('✓ Role uživatele změněna')
   }
 
   const saveCeny = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -163,6 +172,33 @@ export default function DashboardPage() {
     setAkce(prev => prev.filter(a => a.id !== id))
   }
 
+  const addNapoj = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const fd = new FormData(e.currentTarget)
+    const { data } = await supabase.from('napoje').insert([{
+      nazev: fd.get('nazev'),
+      kategorie: fd.get('kategorie'),
+      cena: fd.get('cena'),
+      akcni_cena: fd.get('akcni_cena') || null,
+      stav: fd.get('stav'),
+      obrazek_url: fd.get('obrazek_url') || null
+    }]).select()
+    if (data) setNapoje(prev => [...prev, ...data])
+    ;(e.target as HTMLFormElement).reset()
+    showMsg('✓ Nápoj přidán')
+  }
+
+  const deleteNapoj = async (id: number) => {
+    if (!confirm('Opravdu smazat produkt?')) return
+    await supabase.from('napoje').delete().eq('id', id)
+    setNapoje(prev => prev.filter(n => n.id !== id))
+  }
+
+  const updateNapojStav = async (id: number, field: string, value: any) => {
+    await supabase.from('napoje').update({ [field]: value }).eq('id', id)
+    setNapoje(prev => prev.map(n => n.id === id ? { ...n, [field]: value } : n))
+  }
+
   const getVal = (arr: any[], typ: string, field: string) =>
     arr.find(i => i.typ === typ)?.[field] ?? ''
 
@@ -215,6 +251,39 @@ export default function DashboardPage() {
                     />
                     <span className={styles.toggleSlider} />
                   </label>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ===== ZAMĚSTNANCI A PROFILY (admin only) ===== */}
+        {role === 'admin' && (
+          <div className={`${styles.card} ${styles.fullWidth}`}>
+            <h2 className={styles.cardTitle}>👥 Správa Týmu a Uživatelů</h2>
+            <div className={styles.akceList}>
+              {profily.map(p => (
+                <div key={p.id} className={styles.akceRow} style={{ flexWrap: 'wrap', gap: '10px' }}>
+                  <span style={{ fontWeight: 'bold', width: '200px' }}>{p.full_name || 'Bez jména'}</span>
+                  <span>{p.email}</span>
+                  
+                  <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginLeft: 'auto' }}>
+                    <span className="badge badge-dim">{p.role}</span>
+                    <select 
+                      className="form-select" 
+                      value={p.role}
+                      style={{ padding: '0.2rem', width: '130px' }}
+                      onChange={(e) => updateRole(p.id, e.target.value)}
+                    >
+                      <option value="user">Uživatel (Host)</option>
+                      <option value="obsluha">Obsluha ČS</option>
+                      <option value="klub">Klub Proxy</option>
+                      <option value="tisk">Tiskař</option>
+                      <option value="autoskola">Autoškola</option>
+                      <option value="napojka">Nápojové centrum</option>
+                      <option value="admin">Administrátor</option>
+                    </select>
+                  </div>
                 </div>
               ))}
             </div>
@@ -324,6 +393,83 @@ export default function DashboardPage() {
               ))}
               <button type="submit" className={styles.saveBtn} style={{ background: '#059669' }}>💾 Uložit ceník</button>
             </form>
+          </div>
+        )}
+
+        {/* ===== NÁPOJOVÉ CENTRUM ===== */}
+        {['admin', 'napojka'].includes(role) && (
+          <div className={`${styles.card} ${styles.fullWidth}`}>
+            <h2 className={styles.cardTitle}>🥤 Správa Nápojového centra</h2>
+            <form onSubmit={addNapoj} className={`${styles.settingsRow} ${styles.addAkceForm}`}>
+              <input className="form-input" type="text" name="nazev" placeholder="Název zboží" required style={{ flex: 2 }} />
+              <select className="form-select" name="kategorie" required>
+                <option value="alko">Alkohol</option>
+                <option value="nealko">Nealko</option>
+                <option value="tabak">Tabák</option>
+                <option value="pochutiny">Pochutiny</option>
+              </select>
+              <input className="form-input" type="number" step="0.01" name="cena" placeholder="Běžná cena (Kč)" required />
+              <input className="form-input" type="number" step="0.01" name="akcni_cena" placeholder="Akční cena (Kč)" />
+              <input className="form-input" type="url" name="obrazek_url" placeholder="URL obrázku (např. Unsplash)" />
+              <select className="form-select" name="stav">
+                <option value="Skladem">Skladem</option>
+                <option value="Vyprodáno">Vyprodáno</option>
+              </select>
+              <button type="submit" className={styles.saveBtn} style={{ background: 'var(--color-blue)', color: '#fff' }}>Přidat produkt</button>
+            </form>
+            
+            <div className={styles.akceList}>
+              {napoje.length === 0 && <p className={styles.empty}>Žádné produkty v nabídce.</p>}
+              {napoje.map(n => (
+                <div key={n.id} className={styles.akceRow} style={{ flexWrap: 'wrap', gap: '10px' }}>
+                  <span style={{ fontWeight: 'bold', width: '200px' }}>{n.nazev}</span>
+                  <span className="badge badge-dim">{n.kategorie}</span>
+                  
+                  <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <input 
+                      type="number" 
+                      className="form-input" 
+                      defaultValue={n.cena}
+                      style={{ width: '90px', padding: '0.2rem' }}
+                      onBlur={(e) => updateNapojStav(n.id, 'cena', e.target.value)}
+                      title="Běžná cena"
+                    /> Kč
+                    
+                    <input 
+                      type="number" 
+                      className="form-input" 
+                      defaultValue={n.akcni_cena || ''}
+                      style={{ width: '90px', padding: '0.2rem', borderColor: 'var(--color-yellow)' }}
+                      onBlur={(e) => updateNapojStav(n.id, 'akcni_cena', e.target.value || null)}
+                      placeholder="Bez akce"
+                      title="Akční cena"
+                    /> Kč
+                    
+                    <select 
+                      className="form-select" 
+                      defaultValue={n.stav}
+                      style={{ padding: '0.2rem', width: '110px' }}
+                      onChange={(e) => updateNapojStav(n.id, 'stav', e.target.value)}
+                    >
+                      <option value="Skladem">Skladem</option>
+                      <option value="Vyprodáno">Vyprodáno</option>
+                    </select>
+                    
+                    <input 
+                      type="url" 
+                      className="form-input" 
+                      defaultValue={n.obrazek_url || ''}
+                      style={{ width: '150px', padding: '0.2rem' }}
+                      onBlur={(e) => updateNapojStav(n.id, 'obrazek_url', e.target.value || null)}
+                      placeholder="URL Obrázku"
+                      title="URL obrázku"
+                    />
+                  </div>
+                  
+                  <button className={styles.deleteBtn} onClick={() => deleteNapoj(n.id)}>Smazat</button>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 

@@ -4,6 +4,12 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AnnouncementBar from "@/components/AnnouncementBar";
+import InteractionProvider from "@/components/InteractionProvider";
+import SmoothScroll from "@/components/SmoothScroll";
+import RealtimeSync from "@/components/RealtimeSync";
+import CustomCursor from "@/components/CustomCursor";
+import NaviAssistant from "@/components/NaviAssistant";
+import CookieBanner from "@/components/CookieBanner";
 import { createServerClient } from "@/lib/supabase";
 
 const inter = Inter({
@@ -20,16 +26,23 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: {
-    default: "Logistický areál CSAD Rýmařov",
-    template: "%s | CSAD Rýmařov",
+    template: '%s | CSAD Rýmařov',
+    default: 'CSAD Rýmařov | Logistický areál a služby',
   },
-  description:
-    "Centrum služeb, podnikání a zábavy v Rýmařově. Digitální tisk, čerpací stanice NONSTOP, parkování TIR, hudební klub Proxy a mnoho dalšího.",
-  keywords: ["CSAD", "Rýmařov", "logistický areál", "digitální tisk", "čerpací stanice", "parkování TIR"],
-  openGraph: {
-    siteName: "CSAD Rýmařov",
-    locale: "cs_CZ",
+  description: 'Komplexní služby v Rýmařově: Čerpací stanice NONSTOP, parkování TIR, hudební klub Proxy a další.',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'CSAD Rýmařov',
   },
+};
+
+export const viewport = {
+  themeColor: '#040814',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default async function RootLayout({
@@ -44,6 +57,12 @@ export default async function RootLayout({
   return (
     <html lang="cs" className={`${inter.variable} ${spaceGrotesk.variable}`}>
       <body>
+        <CustomCursor />
+        <SmoothScroll />
+        <InteractionProvider />
+        <NaviAssistant />
+        <CookieBanner />
+        <RealtimeSync tables={['web_status', 'ceny', 'napoje', 'sklad', 'garaze', 'akce']} />
         <div className="film-grain" aria-hidden="true" />
         {nastaveni?.oznameni_aktivni && nastaveni.oznameni_text && (
           <AnnouncementBar text={nastaveni.oznameni_text} />

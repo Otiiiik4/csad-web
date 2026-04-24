@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import SubpageHero from '@/components/SubpageHero'
+import LockedService from '@/components/LockedService'
+import { createServerClient } from '@/lib/supabase'
 import TiskForm from './TiskForm'
 import styles from './page.module.css'
 
@@ -15,7 +17,13 @@ const SERVICES = [
   { icon: '📚', title: 'VAZBA & DOKONČENÍ', accent: 'DOKONČENÍ', desc: 'Kroužková vazba, laminování, velkokapacitní kopírování a skenování.' },
 ]
 
-export default function TiskPage() {
+export default async function TiskPage() {
+  const sb = createServerClient()
+  const { data } = await sb.from('web_status').select('aktivni').eq('kod', 'tisk').single()
+  if (data && data.aktivni === false) {
+    return <LockedService title="Digitální tisk" />
+  }
+
   return (
     <>
       <SubpageHero

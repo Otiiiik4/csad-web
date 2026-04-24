@@ -1,0 +1,70 @@
+.banner {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  width: 100%;
+  max-width: 450px;
+  background: rgba(10, 15, 30, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  z-index: 9998; /* Těsně pod Navi */
+}
+
+.content {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.icon {
+  font-size: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px;
+  border-radius: 12px;
+  line-height: 1;
+}
+
+.textContainer {
+  flex: 1;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: white;
+  margin-bottom: 6px;
+}
+
+.text {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.actions button {
+  width: 100%; /* Na mobilu přes celou šířku, na desktopu max-content kvůli flex-end */
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .banner {
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    width: auto;
+    max-width: none;
+  }
+}

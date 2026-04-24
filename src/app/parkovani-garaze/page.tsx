@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { createServerClient } from '@/lib/supabase'
 import SubpageHero from '@/components/SubpageHero'
+import LockedService from '@/components/LockedService'
 import styles from './page.module.css'
 
 export const metadata: Metadata = {
@@ -12,6 +13,10 @@ export const revalidate = 60
 
 export default async function ParkovaniPage() {
   const sb = createServerClient()
+  
+  const { data: status } = await sb.from('web_status').select('aktivni').eq('kod', 'parkovani').single()
+  if (status && status.aktivni === false) return <LockedService title="Parkování a Garáže" />
+
   const { data: garaze } = await sb.from('garaze').select('*')
 
   const getCena = (typ: string) =>

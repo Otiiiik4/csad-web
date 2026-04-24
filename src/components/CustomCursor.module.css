@@ -1,0 +1,40 @@
+.cursorDot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  background: var(--color-yellow);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.8);
+}
+
+.cursorRing {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+              height 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+              background 0.3s ease, 
+              border 0.3s ease,
+              margin 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Stav po najetí na aktivní prvek */
+.hovered {
+  width: 70px;
+  height: 70px;
+  margin-top: -15px; /* Vycentrování: (70 - 40) / 2 */
+  margin-left: -15px;
+  background: rgba(251, 191, 36, 0.05);
+  border-color: var(--color-yellow);
+  backdrop-filter: blur(2px);
+}

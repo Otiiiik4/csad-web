@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { supabase } from '@/lib/supabase'
 import styles from './Navbar.module.css'
 
 const NAV_LINKS = [
@@ -16,7 +17,13 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const [progress, setProgress] = useState(0)
+  const [session, setSession] = useState<any>(null)
   const menuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSession(data.session))
+    supabase.auth.onAuthStateChange((_e, s) => setSession(s))
+  }, [])
 
   useEffect(() => {
     const onScroll = () => {
@@ -61,9 +68,15 @@ export default function Navbar() {
         </ul>
 
         {/* CTA */}
-        <Link href="/tisk" className={`btn btn-primary ${styles.cta}`}>
-          Poptat tisk
-        </Link>
+        {session ? (
+          <Link href="/profil" className={`btn btn-secondary ${styles.cta}`}>
+            Můj Profil
+          </Link>
+        ) : (
+          <Link href="/registrace" className={`btn btn-primary ${styles.cta}`}>
+            Připojit se
+          </Link>
+        )}
 
         {/* Hamburger */}
         <button
@@ -88,9 +101,15 @@ export default function Navbar() {
             {l.label}
           </Link>
         ))}
-        <Link href="/tisk" className="btn btn-primary" onClick={() => setOpen(false)}>
-          Poptat tisk
-        </Link>
+        {session ? (
+          <Link href="/profil" className="btn btn-secondary" onClick={() => setOpen(false)}>
+            Můj Profil
+          </Link>
+        ) : (
+          <Link href="/registrace" className="btn btn-primary" onClick={() => setOpen(false)}>
+            Připojit se
+          </Link>
+        )}
       </div>
     </nav>
   )

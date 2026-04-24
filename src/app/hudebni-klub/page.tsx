@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { createServerClient } from '@/lib/supabase'
 import SubpageHero from '@/components/SubpageHero'
+import LockedService from '@/components/LockedService'
 import type { Akce } from '@/lib/types'
 import styles from './page.module.css'
 
@@ -13,6 +14,10 @@ export const revalidate = 120
 
 export default async function KlubPage() {
   const sb = createServerClient()
+
+  const { data: status } = await sb.from('web_status').select('aktivni').eq('kod', 'klub').single()
+  if (status && status.aktivni === false) return <LockedService title="Hudební klub Proxy" />
+
   const { data: akce } = await sb.from('akce').select('*').order('id', { ascending: true })
   const events: Akce[] = akce ?? []
 

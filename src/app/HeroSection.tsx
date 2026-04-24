@@ -22,13 +22,18 @@ export default function HeroSection() {
 
   return (
     <section className={styles.hero}>
-      {/* Background image with parallax */}
-      <div
-        ref={bgRef}
-        className={styles.bg}
-        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070&auto=format&fit=crop')" }}
-        aria-hidden="true"
-      />
+      {/* Background Video with parallax */}
+      <video
+        ref={bgRef as any}
+        autoPlay
+        loop
+        muted
+        playsInline
+        className={styles.bgVideo}
+        poster="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070&auto=format&fit=crop"
+      >
+        <source src="https://cdn.coverr.co/videos/coverr-driving-a-truck-on-a-highway-4914/1080p.mp4" type="video/mp4" />
+      </video>
       {/* Overlays */}
       <div className={styles.overlayGrad} aria-hidden="true" />
       <div className={styles.overlayNoise} aria-hidden="true" />

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { createServerClient } from '@/lib/supabase'
 import SubpageHero from '@/components/SubpageHero'
+import LockedService from '@/components/LockedService'
 import type { Napoj } from '@/lib/types'
 import styles from './page.module.css'
 
@@ -20,6 +21,10 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 export default async function NapojoveCentrumPage() {
   const sb = createServerClient()
+
+  const { data: status } = await sb.from('web_status').select('aktivni').eq('kod', 'napoje').single()
+  if (status && status.aktivni === false) return <LockedService title="Nápojové centrum" />
+
   const { data: napoje } = await sb.from('napoje').select('*').order('kategorie').order('nazev')
   const items: Napoj[] = napoje ?? []
 
@@ -57,8 +62,19 @@ export default async function NapojoveCentrumPage() {
                 <div className={styles.napojGrid}>
                   {byCategory[cat].map(n => (
                     <div key={n.id} className={`${styles.napojCard} card ${n.stav === 'Vyprodáno' ? 'passive' : ''}`}>
-                      {n.stav === 'Vyprodáno' && <span className="badge badge-dim" style={{ position: 'absolute', top: 10, right: 10 }}>Vyprodáno</span>}
-                      {n.akcni_cena && <span className="badge badge-yellow" style={{ position: 'absolute', top: 10, right: 10 }}>AKCE</span>}
+                      {n.stav === 'Vyprodáno' && <span className="badge badge-dim" style={{ position: 'absolute', top: 10, right: 10, zIndex: 2 }}>Vyprodáno</span>}
+                      {n.akcni_cena && <span className="badge badge-yellow" style={{ position: 'absolute', top: 10, right: 10, zIndex: 2 }}>AKCE</span>}
+                      
+                      {n.obrazek_url ? (
+                        <div className={styles.napojImageWrapper}>
+                          <img src={n.obrazek_url} alt={n.nazev} className={styles.napojImage} loading="lazy" />
+                        </div>
+                      ) : (
+                        <div className={styles.napojImageWrapper} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <span style={{ fontSize: '3rem', opacity: 0.2 }}>🥤</span>
+                        </div>
+                      )}
+
                       <div className={styles.napojName}>{n.nazev}</div>
                       <div className={styles.napojPrice}>
                         {n.akcni_cena ? (

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { createServerClient } from '@/lib/supabase'
 import type { WebStatus, Cena } from '@/lib/types'
 import HeroSection from './HeroSection'
+import StickyScrollSection from '@/components/StickyScrollSection'
 import ServicesGrid from './ServicesGrid'
 import MottoSection from './MottoSection'
 import styles from './page.module.css'
@@ -33,6 +34,7 @@ export default async function HomePage() {
   return (
     <div className={styles.page}>
       <HeroSection />
+      <StickyScrollSection />
       <MottoSection />
       <section className={styles.servicesSection}>
         <div className="container">
