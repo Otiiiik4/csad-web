@@ -3,5 +3,5 @@
 }
 
 .page {
-  overflow-x: hidden;
+  /* overflow-x zrušeno kvůli narušení position: sticky u scrollu */
 }

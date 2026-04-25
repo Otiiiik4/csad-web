@@ -498,7 +498,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 /* ---- RESPONSIVE ---- */
 @media (max-width: 768px) {
   .section { padding: 60px 0; }
-  .container, .container-md { padding: 0 16px; overflow-x: hidden; }
+  .container, .container-md { padding: 0 16px; }
 }
 
 /* ---- CUSTOM SCROLLBAR ---- */
