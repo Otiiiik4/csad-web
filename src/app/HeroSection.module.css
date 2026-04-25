@@ -102,13 +102,14 @@
 /* TITLE */
 .title {
   font-family: var(--font-display);
-  font-size: clamp(3rem, 8vw, 7rem);
+  font-size: clamp(2.2rem, 8vw, 7rem);
   font-weight: 700;
   line-height: 0.95;
   letter-spacing: -0.04em;
   text-transform: uppercase;
   color: white;
   margin-bottom: 24px;
+  word-break: break-word;
   animation: fadeUp 0.8s 0.2s both;
 }
 

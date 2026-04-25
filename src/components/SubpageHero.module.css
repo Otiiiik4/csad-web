@@ -1,12 +1,13 @@
 .title {
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 7vw, 5.5rem);
+  font-size: clamp(2rem, 7vw, 5.5rem);
   font-weight: 700;
   color: white;
   line-height: 1;
   letter-spacing: -0.035em;
   text-transform: uppercase;
   margin-bottom: 20px;
+  word-break: break-word;
 }
 
 .sub {

@@ -2,4 +2,6 @@
   background: var(--color-bg);
 }
 
-.page {}
+.page {
+  overflow-x: hidden;
+}
