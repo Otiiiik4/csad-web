@@ -48,7 +48,15 @@ export default function Navbar() {
   return (
     <nav className={`${styles.nav} ${scrolled ? styles.scrolled : ''}`} ref={menuRef}>
       {/* Scroll progress bar */}
-      <div className={styles.progressBar} style={{ width: `${progress}%` }} aria-hidden="true" />
+      <div 
+        className={styles.progressBar} 
+        style={{ 
+          width: `${progress}%`,
+          opacity: scrolled ? 1 : 0,
+          transition: 'width 0.1s linear, opacity 0.3s ease'
+        }} 
+        aria-hidden="true" 
+      />
 
       <div className={styles.inner}>
         {/* Logo */}
