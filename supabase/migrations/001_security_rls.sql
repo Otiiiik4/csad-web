@@ -45,6 +45,13 @@ alter table public.profiles add column if not exists bio        text;
 alter table public.profiles add column if not exists role       text not null default 'user';
 alter table public.profiles add column if not exists created_at timestamptz not null default now();
 
+-- Srovnání starých rolí. Dřívější verze /registrace zapisovala roli 'host',
+-- na které by se přidání constraintu níže zaseklo.
+update public.profiles
+set role = 'user'
+where role is null
+   or role not in ('user', 'obsluha', 'klub', 'tisk', 'autoskola', 'napojka', 'admin');
+
 -- Povolené role — brání překlepům i podstrčení vymyšlené role
 alter table public.profiles drop constraint if exists profiles_role_check;
 alter table public.profiles add  constraint profiles_role_check
@@ -280,13 +287,19 @@ end $$;
 
 
 -- =============================================================================
--- POSLEDNÍ KROK — nastav si sebe jako admina
+-- POSLEDNÍ KROK — nastavení administrátora
 -- =============================================================================
--- Odkomentuj a doplň svůj e-mail, jinak se po zapnutí RLS do správy nedostaneš:
---
---   update public.profiles set role = 'admin'
---   where email = 'tvuj@email.cz';
---
--- Ověření, že to sedí:
---   select email, role from public.profiles order by role;
+-- Účet musí v Supabase existovat DŘÍV, než tenhle příkaz proběhne. Pokud ještě
+-- neexistuje, příkaz nic neudělá (nespadne) — po založení účtu ho pusť znovu
+-- samostatně, celou migraci kvůli tomu opakovat nemusíš.
+
+update public.profiles
+set role      = 'admin',
+    full_name = coalesce(nullif(full_name, ''), 'Admin123')
+where email = 'otagardener@gmail.com';
+
+-- Kontrola: musí vrátit řádek s rolí admin
+select email, full_name, role
+from public.profiles
+order by role, email;
 -- =============================================================================
