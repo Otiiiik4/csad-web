@@ -73,6 +73,30 @@ drop policy if exists "Users can insert their own profile."       on public.prof
 drop policy if exists "Admins can update any profile."            on public.profiles;
 
 
+-- -----------------------------------------------------------------------------
+-- 5. Trigger funkce nemají být volatelné přes veřejné REST API
+-- -----------------------------------------------------------------------------
+-- handle_new_user() a protect_profile_role() jsou SECURITY DEFINER trigger
+-- funkce z migrace 001. Supabase je ale vystavil i jako /rest/v1/rpc/…, takže
+-- je mohl zavolat kdokoli. Jako triggery fungují dál — ty se spouští pod
+-- vlastníkem tabulky, ne pod volajícím.
+revoke all on function public.handle_new_user()      from public, anon, authenticated;
+revoke all on function public.protect_profile_role() from public, anon, authenticated;
+
+-- Zbytek po původním nastavení: is_admin() už žádná politika nepoužívá
+-- (používala ji jen smazaná "Admins can update any profile."). Nemá nastavený
+-- search_path, což je u SECURITY DEFINER funkce riziko — doplníme ho a
+-- zavřeme volání zvenčí. Nemažeme ji, aby migrace nespadla, kdyby na ni ještě
+-- něco viselo.
+do $$
+begin
+  if exists (select 1 from pg_proc where proname = 'is_admin') then
+    execute 'alter function public.is_admin() set search_path = public';
+    execute 'revoke all on function public.is_admin() from public, anon, authenticated';
+  end if;
+end $$;
+
+
 -- =============================================================================
 -- KONTROLA — po spuštění musí zůstat jen politiky v malých písmenech
 -- (web_status_read, ceny_write, profiles_read_own, …). Žádná se nesmí
@@ -83,3 +107,11 @@ select tablename, policyname, cmd
 from pg_policies
 where schemaname = 'public'
 order by tablename, policyname;
+
+-- =============================================================================
+-- JEŠTĚ JEDNO NASTAVENÍ MIMO SQL
+-- =============================================================================
+-- Supabase → Authentication → Policies → Password security:
+-- zapnout "Leaked password protection" (kontrola hesel proti HaveIBeenPwned).
+-- Teď je vypnutá, takže projde i heslo z veřejných úniků.
+-- =============================================================================
