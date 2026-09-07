@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import styles from './page.module.css'
 
 export const metadata: Metadata = {
-  title: 'Probíhá údržba | CSAD Rýmařov',
+  title: 'Probíhá údržba', // root layout doplní " | CSAD Rýmařov"
   description: 'Webové stránky CSAD Rýmařov jsou momentálně ve vývoji. Brzy se vrátíme.',
 }
 

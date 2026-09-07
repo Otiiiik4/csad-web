@@ -11,6 +11,7 @@ import CustomCursor from "@/components/CustomCursor";
 import NaviAssistant from "@/components/NaviAssistant";
 import CookieBanner from "@/components/CookieBanner";
 import GarazePopup from "@/components/GarazePopup";
+import ChromeGate from "@/components/ChromeGate";
 import { createServerClient } from "@/lib/supabase";
 
 const inter = Inter({
@@ -58,23 +59,30 @@ export default async function RootLayout({
   return (
     <html lang="cs" className={`${inter.variable} ${spaceGrotesk.variable}`}>
       <body>
-        <CustomCursor />
-        <SmoothScroll />
-        <InteractionProvider />
-        <NaviAssistant />
-        <CookieBanner />
-        <GarazePopup />
-        <RealtimeSync tables={['web_status', 'ceny', 'napoje', 'sklad', 'garaze', 'akce']} />
-        <div className="film-grain" aria-hidden="true" />
-        {nastaveni?.oznameni_aktivni && nastaveni.oznameni_text && (
-          <AnnouncementBar text={nastaveni.oznameni_text} />
-        )}
-        <Navbar />
+        {/* Obal webu — na samostatných stránkách (údržba) se nevykresluje */}
+        <ChromeGate>
+          <CustomCursor />
+          <SmoothScroll />
+          <InteractionProvider />
+          <NaviAssistant />
+          <CookieBanner />
+          <GarazePopup />
+          <RealtimeSync tables={['web_status', 'ceny', 'napoje', 'sklad', 'garaze', 'akce']} />
+          <div className="film-grain" aria-hidden="true" />
+          {nastaveni?.oznameni_aktivni && nastaveni.oznameni_text && (
+            <AnnouncementBar text={nastaveni.oznameni_text} />
+          )}
+          <Navbar />
+        </ChromeGate>
+
         <main>{children}</main>
-        <Footer
-          telefon={nastaveni?.telefon_dispecink ?? "+420 601 223 344"}
-          email={nastaveni?.email_info ?? "info@csad-rymarov.cz"}
-        />
+
+        <ChromeGate>
+          <Footer
+            telefon={nastaveni?.telefon_dispecink ?? "+420 601 223 344"}
+            email={nastaveni?.email_info ?? "info@csad-rymarov.cz"}
+          />
+        </ChromeGate>
       </body>
     </html>
   );
