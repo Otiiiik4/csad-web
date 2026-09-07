@@ -1,5 +1,18 @@
 // Database type definitions for CSAD Rýmařov
 
+/** Role určuje, které karty uživatel uvidí v /admin/dashboard. */
+export type Role = 'user' | 'obsluha' | 'klub' | 'tisk' | 'autoskola' | 'napojka' | 'admin'
+
+export interface Profile {
+  id: string
+  email: string | null
+  full_name: string | null
+  avatar_url: string | null
+  bio: string | null
+  role: Role
+  created_at: string
+}
+
 export interface WebStatus {
   id: number
   kod: string

@@ -47,9 +47,12 @@ export default function NaviAssistant() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  // Bublina se nikdy nekreslí přes otevřené okno — odvozeno, ne přes setState
+  // v efektu (to by vyvolalo zbytečný druhý render).
+  const greetingVisible = showGreeting && !isOpen
+
   useEffect(() => {
     if (isOpen) {
-      setShowGreeting(false) // Skryjeme bublinu při otevření
       scrollToBottom()
       playSound('transition')
     }
@@ -86,7 +89,7 @@ export default function NaviAssistant() {
       try {
         const reply = await askNavi(userText)
         setMessages(prev => [...prev, { id: Date.now().toString(), role: 'navi', content: reply }])
-      } catch (err) {
+      } catch {
         setMessages(prev => [...prev, { id: Date.now().toString(), role: 'navi', content: 'Došlo k výpadku mého spojení s dispečinkem. Zkuste to za chvíli.' }])
       } finally {
         setIsTyping(false)
@@ -120,7 +123,7 @@ export default function NaviAssistant() {
 
       {/* Uvítací bublina (zobrazí se chvíli po načtení) */}
       <AnimatePresence>
-        {!isOpen && showGreeting && (
+        {greetingVisible && (
           <motion.div
             initial={{ opacity: 0, y: 10, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}

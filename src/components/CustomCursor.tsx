@@ -1,12 +1,26 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useSyncExternalStore } from 'react'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 import styles from './CustomCursor.module.css'
 
+/* Detekce ukazovacího zařízení přes useSyncExternalStore — na rozdíl od
+   setState v efektu nezpůsobí druhý průchod renderem a korektně reaguje,
+   když uživatel přepne z dotyku na myš (hybridní notebooky). */
+const COARSE_POINTER = '(pointer: coarse)'
+
+const subscribePointer = (onChange: () => void) => {
+  const mq = window.matchMedia(COARSE_POINTER)
+  mq.addEventListener('change', onChange)
+  return () => mq.removeEventListener('change', onChange)
+}
+
+const hasMouse = () => !window.matchMedia(COARSE_POINTER).matches
+const hasMouseOnServer = () => false // při SSR kurzor nevykreslujeme
+
 export default function CustomCursor() {
   const [isHovered, setIsHovered] = useState(false)
-  const [isVisible, setIsVisible] = useState(false)
+  const isVisible = useSyncExternalStore(subscribePointer, hasMouse, hasMouseOnServer)
 
   // Pevný středový bod
   const mouseX = useMotionValue(-100)
@@ -21,9 +35,8 @@ export default function CustomCursor() {
   const springRingY = useSpring(ringY, { stiffness: 400, damping: 28, mass: 0.5 })
 
   useEffect(() => {
-    // Zapneme pouze pro zařízení s myší (ne pro dotykové obrazovky)
-    if (window.matchMedia('(pointer: coarse)').matches) return
-    setIsVisible(true)
+    // Posluchače věšíme jen na zařízeních s myší
+    if (!isVisible) return
 
     const mousePos = { x: -100, y: -100 }
 
@@ -69,7 +82,7 @@ export default function CustomCursor() {
       window.removeEventListener('mousemove', moveCursor)
       window.removeEventListener('scroll', handleScroll)
     }
-  }, [mouseX, mouseY, ringX, ringY])
+  }, [isVisible, mouseX, mouseY, ringX, ringY])
 
   if (!isVisible) return null
 

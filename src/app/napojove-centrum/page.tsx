@@ -67,6 +67,9 @@ export default async function NapojoveCentrumPage() {
                       
                       {n.obrazek_url ? (
                         <div className={styles.napojImageWrapper}>
+                          {/* URL obrázku zadává obsluha v dashboardu (libovolná
+                              doména), proto <img> místo next/image. */}
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src={n.obrazek_url} alt={n.nazev} className={styles.napojImage} loading="lazy" />
                         </div>
                       ) : (

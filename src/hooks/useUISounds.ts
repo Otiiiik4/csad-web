@@ -8,7 +8,11 @@ export function useUISounds() {
   useEffect(() => {
     const initAudio = () => {
       if (!audioCtxRef.current) {
-        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
+        // Safari < 14.1 vystavuje Web Audio jen pod prefixem
+        const Ctor =
+          window.AudioContext ??
+          (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+        if (Ctor) audioCtxRef.current = new Ctor()
       }
     }
     window.addEventListener('click', initAudio, { once: true })
