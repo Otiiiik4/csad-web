@@ -2,8 +2,13 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import type { User } from '@supabase/supabase-js'
+import type {
+  WebStatus, Cena, SkladItem, Garaz, Akce, Nastaveni,
+  Zprava, PoptavkaTisk, Napoj, Profile,
+} from '@/lib/types'
 import styles from './dashboard.module.css'
 
 // ---- Role names for UI ----
@@ -17,28 +22,20 @@ const ROLE_NAMES: Record<string, string> = {
   napojka:  'Barmane',
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  tisk: 'Digitální tisk', phm: 'Čerpací stanice', parkovani: 'Parkování', klub: 'Klub Proxy',
-  autoskoly: 'Autoškoly', vala: 'Dopravní psycholog', verdatex: 'Spedice Verdatex',
-  autoservis: 'Autoservis', emise: 'Emise a STK', uhli: 'Prémiová paliva',
-  drevo: 'Dřevo Horáček', stas: 'STAS Rýmařov', fve: 'Projekce FVE',
-  napoje: 'Nápojové centrum', cetin: 'CETIN', najemci: 'Další nájemci',
-}
-
 export default function DashboardPage() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [role, setRole] = useState('')
-  const [webStatuses, setWebStatuses] = useState<any[]>([])
-  const [ceny, setCeny] = useState<any[]>([])
-  const [sklad, setSklad] = useState<any[]>([])
-  const [garaze, setGaraze] = useState<any[]>([])
-  const [nastaveni, setNastaveni] = useState<any>(null)
-  const [akce, setAkce] = useState<any[]>([])
-  const [zpravy, setZpravy] = useState<any[]>([])
-  const [tiskZakazky, setTiskZakazky] = useState<any[]>([])
-  const [napoje, setNapoje] = useState<any[]>([])
-  const [profily, setProfily] = useState<any[]>([])
+  const [webStatuses, setWebStatuses] = useState<WebStatus[]>([])
+  const [ceny, setCeny] = useState<Cena[]>([])
+  const [sklad, setSklad] = useState<SkladItem[]>([])
+  const [garaze, setGaraze] = useState<Garaz[]>([])
+  const [nastaveni, setNastaveni] = useState<Nastaveni | null>(null)
+  const [akce, setAkce] = useState<Akce[]>([])
+  const [zpravy, setZpravy] = useState<Zprava[]>([])
+  const [tiskZakazky, setTiskZakazky] = useState<PoptavkaTisk[]>([])
+  const [napoje, setNapoje] = useState<Napoj[]>([])
+  const [profily, setProfily] = useState<Profile[]>([])
   const [saveMsg, setSaveMsg] = useState('')
 
   const showMsg = (msg: string) => {
@@ -104,7 +101,7 @@ export default function DashboardPage() {
     setWebStatuses(prev => prev.map(s => s.kod === kod ? { ...s, aktivni: !current } : s))
   }
 
-  const updateRole = async (id: string, newRole: string) => {
+  const updateRole = async (id: string, newRole: Profile['role']) => {
     await supabase.from('profiles').update({ role: newRole }).eq('id', id)
     setProfily(prev => prev.map(p => p.id === id ? { ...p, role: newRole } : p))
     showMsg('✓ Role uživatele změněna')
@@ -194,13 +191,13 @@ export default function DashboardPage() {
     setNapoje(prev => prev.filter(n => n.id !== id))
   }
 
-  const updateNapojStav = async (id: number, field: string, value: any) => {
+  const updateNapojStav = async (id: number, field: keyof Napoj, value: string | number | null) => {
     await supabase.from('napoje').update({ [field]: value }).eq('id', id)
     setNapoje(prev => prev.map(n => n.id === id ? { ...n, [field]: value } : n))
   }
 
-  const getVal = (arr: any[], typ: string, field: string) =>
-    arr.find(i => i.typ === typ)?.[field] ?? ''
+  const getVal = <T extends { typ: string }>(arr: T[], typ: string, field: keyof T): string | number =>
+    (arr.find(i => i.typ === typ)?.[field] as string | number | undefined) ?? ''
 
   if (!user) return (
     <div className={styles.loading}>
@@ -220,7 +217,7 @@ export default function DashboardPage() {
           <span className={styles.emailBadge}>{user.email}</span>
         </div>
         <div className={styles.headerActions}>
-          <a href="/" className={`btn btn-secondary ${styles.homeBtn}`}>🏠 Na web</a>
+          <Link href="/" className={`btn btn-secondary ${styles.homeBtn}`}>🏠 Na web</Link>
           <button onClick={handleLogout} className={`btn btn-secondary`}>Odhlásit →</button>
         </div>
       </div>
@@ -273,7 +270,7 @@ export default function DashboardPage() {
                       className="form-select" 
                       value={p.role}
                       style={{ padding: '0.2rem', width: '130px' }}
-                      onChange={(e) => updateRole(p.id, e.target.value)}
+                      onChange={(e) => updateRole(p.id, e.target.value as Profile['role'])}
                     >
                       <option value="user">Uživatel (Host)</option>
                       <option value="obsluha">Obsluha ČS</option>

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import Link from 'next/link'
 import styles from './CookieBanner.module.css'
 
 export default function CookieBanner() {
@@ -21,6 +20,8 @@ export default function CookieBanner() {
   const accept = () => {
     localStorage.setItem('csad_cookie_consent', 'accepted')
     setShow(false)
+    // Dáme vědět promo popupu, že může vyjet — ať se neotevřou přes sebe
+    window.dispatchEvent(new Event('csad:cookie-consent'))
   }
 
   return (

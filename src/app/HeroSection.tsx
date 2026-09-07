@@ -5,7 +5,7 @@ import Link from 'next/link'
 import styles from './HeroSection.module.css'
 
 export default function HeroSection() {
-  const bgRef = useRef<HTMLDivElement>(null)
+  const bgRef = useRef<HTMLVideoElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export default function HeroSection() {
     <section className={styles.hero}>
       {/* Background Video with parallax */}
       <video
-        ref={bgRef as any}
+        ref={bgRef}
         autoPlay
         loop
         muted

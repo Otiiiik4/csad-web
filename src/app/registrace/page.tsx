@@ -23,11 +23,14 @@ export default function Registrace() {
     const heslo = fd.get('heslo') as string
 
     // 1. Zaregistruj do Supabase
+    // Roli sem záměrně NEposíláme — metadata si může uživatel nastavit sám,
+    // takže by šlo takhle podstrčit 'admin'. Profil zakládá databázový trigger
+    // handle_new_user() s bezpečným výchozím 'user', roli mění jen administrátor.
     const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password: heslo,
       options: {
-        data: { full_name: jmeno, role: 'host' }
+        data: { full_name: jmeno }
       }
     })
 

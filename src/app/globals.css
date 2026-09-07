@@ -3,7 +3,9 @@
    "Industrial Premium" — Dark, bold, precise
    ================================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+/* Fonty se načítají přes next/font v src/app/layout.tsx (self-hosted, bez
+   render-blocking requestu na Google). Nepřidávej sem @import — duplikoval by
+   stahování a zpomalil první vykreslení. */
 
 /* ---- CSS CUSTOM PROPERTIES ---- */
 :root {
@@ -100,6 +102,14 @@ a {
 
 img, video { max-width: 100%; display: block; }
 button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+/* ---- OTEVŘENÝ MODAL ----
+   Plovoucí prvky (Navi) by jinak prosvítaly přes průhledný overlay. */
+html.modal-open [data-ui="navi"] {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
 
 /* ---- FILM GRAIN OVERLAY ---- */
 .film-grain {

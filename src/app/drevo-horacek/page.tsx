@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
+import { createServerClient } from '@/lib/supabase'
 import SubpageHero from '@/components/SubpageHero'
+import LockedService from '@/components/LockedService'
 import styles from './page.module.css'
 
 export const metadata: Metadata = {
@@ -13,7 +15,13 @@ const DREVO = [
   { icon: '📏', title: 'Metrová kulatina', items: ['Délka přesně 1 metr', 'Vlastní štípání v ceně', 'Objednávka na míru'] },
 ]
 
-export default function DrevoPage() {
+export const revalidate = 300
+
+export default async function DrevoPage() {
+  const sb = createServerClient()
+  const { data: status } = await sb.from('web_status').select('aktivni').eq('kod', 'drevo').single()
+  if (status && status.aktivni === false) return <LockedService title="Dřevo Horáček" />
+
   return (
     <>
       <SubpageHero

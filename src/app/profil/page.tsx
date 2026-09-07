@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import type { Profile as ProfileRow } from '@/lib/types'
 import styles from './page.module.css'
 
 export default function Profil() {
@@ -10,29 +11,34 @@ export default function Profil() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
-  const [profile, setProfile] = useState<any>(null)
+  const [profile, setProfile] = useState<ProfileRow | null>(null)
+
+  // Zvýšením klíče si vynutíme znovunačtení profilu (po uložení změn)
+  const [reloadKey, setReloadKey] = useState(0)
 
   useEffect(() => {
-    loadProfile()
-  }, [])
+    let active = true
 
-  const loadProfile = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-      router.push('/admin') // Redirect to login
-      return
-    }
+    void (async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        router.push('/admin') // Redirect to login
+        return
+      }
 
-    // Fetch profile from table
-    const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single()
-    if (data) {
-      setProfile(data)
-    }
-    setLoading(false)
-  }
+      const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+      if (!active) return // komponenta se mezitím odmountovala
+
+      if (data) setProfile(data)
+      setLoading(false)
+    })()
+
+    return () => { active = false }
+  }, [router, reloadKey])
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (!profile) return
     setSaving(true)
     setMsg('')
 
@@ -45,7 +51,7 @@ export default function Profil() {
 
     setMsg('Profil byl úspěšně aktualizován.')
     setSaving(false)
-    loadProfile() // refresh state
+    setReloadKey(k => k + 1) // znovu načteme uložená data
   }
 
   const handleLogout = async () => {
@@ -64,7 +70,10 @@ export default function Profil() {
         <div className={styles.sidebar}>
           <div className={styles.avatarBox}>
             {profile.avatar_url ? (
-              <img src={profile.avatar_url} alt="Avatar" className={styles.avatarImg} />
+              // Avatar je libovolná URL zadaná uživatelem — next/image by
+              // vyžadoval předem povolenou doménu v next.config.ts.
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={profile.avatar_url} alt="Avatar" className={styles.avatarImg} loading="lazy" />
             ) : (
               <div className={styles.avatarPlaceholder}>
                 {profile.full_name ? profile.full_name.charAt(0).toUpperCase() : 'U'}

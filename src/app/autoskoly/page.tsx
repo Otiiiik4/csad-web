@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
+import { createServerClient } from '@/lib/supabase'
 import SubpageHero from '@/components/SubpageHero'
+import LockedService from '@/components/LockedService'
 import styles from './page.module.css'
 
 export const metadata: Metadata = {
@@ -24,7 +26,13 @@ const SCHOOLS = [
   },
 ]
 
-export default function AutoskolyPage() {
+export const revalidate = 300
+
+export default async function AutoskolyPage() {
+  const sb = createServerClient()
+  const { data: status } = await sb.from('web_status').select('aktivni').eq('kod', 'autoskoly').single()
+  if (status && status.aktivni === false) return <LockedService title="Autoškoly" />
+
   return (
     <>
       <SubpageHero
