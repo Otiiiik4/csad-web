@@ -103,6 +103,14 @@ a {
 img, video { max-width: 100%; display: block; }
 button { cursor: pointer; border: none; background: none; font-family: inherit; }
 
+/* ---- OTEVŘENÝ MODAL ----
+   Plovoucí prvky (Navi) by jinak prosvítaly přes průhledný overlay. */
+html.modal-open [data-ui="navi"] {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
 /* ---- FILM GRAIN OVERLAY ---- */
 .film-grain {
   position: fixed;

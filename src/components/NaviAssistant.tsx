@@ -99,7 +99,7 @@ export default function NaviAssistant() {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-ui="navi">
       {/* Plovoucí orb */}
       <AnimatePresence>
         {!isOpen && (

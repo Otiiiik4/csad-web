@@ -10,6 +10,7 @@ import RealtimeSync from "@/components/RealtimeSync";
 import CustomCursor from "@/components/CustomCursor";
 import NaviAssistant from "@/components/NaviAssistant";
 import CookieBanner from "@/components/CookieBanner";
+import GarazePopup from "@/components/GarazePopup";
 import { createServerClient } from "@/lib/supabase";
 
 const inter = Inter({
@@ -62,6 +63,7 @@ export default async function RootLayout({
         <InteractionProvider />
         <NaviAssistant />
         <CookieBanner />
+        <GarazePopup />
         <RealtimeSync tables={['web_status', 'ceny', 'napoje', 'sklad', 'garaze', 'akce']} />
         <div className="film-grain" aria-hidden="true" />
         {nastaveni?.oznameni_aktivni && nastaveni.oznameni_text && (
