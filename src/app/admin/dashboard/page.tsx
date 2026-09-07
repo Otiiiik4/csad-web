@@ -107,6 +107,31 @@ export default function DashboardPage() {
     showMsg('✓ Role uživatele změněna')
   }
 
+  const toggleUdrzba = async () => {
+    if (!nastaveni) return
+    const zapnout = !nastaveni.udrzba_aktivni
+
+    const otazka = zapnout
+      ? 'Zapnout údržbu?\n\nNávštěvníci uvidí místo webu údržbovou stránku. Správa areálu zůstane přístupná.'
+      : 'Vypnout údržbu?\n\nWeb se zveřejní všem návštěvníkům.'
+    if (!confirm(otazka)) return
+
+    const { error } = await supabase
+      .from('nastaveni')
+      .update({ udrzba_aktivni: zapnout })
+      .eq('id', 1)
+
+    if (error) {
+      showMsg('✗ Nepodařilo se uložit: ' + error.message)
+      return
+    }
+
+    setNastaveni({ ...nastaveni, udrzba_aktivni: zapnout })
+    showMsg(zapnout
+      ? '✓ Údržba zapnuta — web je pro návštěvníky skrytý'
+      : '✓ Údržba vypnuta — web je veřejně přístupný')
+  }
+
   const saveCeny = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const fd = new FormData(e.currentTarget)
@@ -225,6 +250,47 @@ export default function DashboardPage() {
       {saveMsg && <div className={`status-msg success ${styles.stickyMsg}`}>{saveMsg}</div>}
 
       <div className={styles.grid}>
+
+        {/* ===== REŽIM ÚDRŽBY (admin only) ===== */}
+        {role === 'admin' && nastaveni && (
+          <div
+            className={`${styles.card} ${styles.fullWidth} ${styles.udrzbaCard}`}
+            style={{ borderLeft: `4px solid ${nastaveni.udrzba_aktivni ? 'var(--color-red)' : 'var(--color-green)'}` }}
+          >
+            <h2 className={styles.cardTitle}>🚧 Režim údržby</h2>
+            <p className={styles.cardSub}>
+              Při zapnuté údržbě uvidí návštěvníci místo webu údržbovou stránku.
+              Správa areálu, přihlášení a registrace zůstávají přístupné vám i personálu.
+            </p>
+
+            <div className={styles.udrzbaRadek}>
+              <div>
+                <span className={nastaveni.udrzba_aktivni ? styles.udrzbaZapnuta : styles.udrzbaVypnuta}>
+                  {nastaveni.udrzba_aktivni ? '🔒 Web je skrytý' : '🌍 Web je veřejný'}
+                </span>
+                <span className={styles.udrzbaPopis}>
+                  {nastaveni.udrzba_aktivni
+                    ? 'Návštěvníci jsou přesměrováni na /udrzba.'
+                    : 'Web je dostupný všem návštěvníkům.'}
+                </span>
+              </div>
+
+              <label className={styles.toggle}>
+                <input
+                  type="checkbox"
+                  checked={nastaveni.udrzba_aktivni}
+                  onChange={toggleUdrzba}
+                  aria-label="Přepnout režim údržby"
+                />
+                <span className={styles.toggleSlider} />
+              </label>
+            </div>
+
+            <p className={styles.udrzbaPoznamka}>
+              Změna se projeví návštěvníkům zhruba do 15 vteřin.
+            </p>
+          </div>
+        )}
 
         {/* ===== WEB STATUS (admin only) ===== */}
         {role === 'admin' && (

@@ -27,6 +27,8 @@ export interface Nastaveni {
   oteviraci_doba: string
   telefon_dispecink: string
   email_info: string
+  /** Zapnutá údržba schová web návštěvníkům, přepíná se v dashboardu. */
+  udrzba_aktivni: boolean
 }
 
 export interface Cena {
