@@ -97,7 +97,7 @@ export default function AdminLoginForm() {
     <form onSubmit={handleSubmit} className={styles.form}>
       <div className="form-group">
         <label className="form-label" htmlFor="email">E-mail</label>
-        <input id="email" className="form-input" type="email" name="email" placeholder="admin@csad.cz" required autoComplete="email" />
+        <input id="email" className="form-input" type="email" name="email" placeholder="vas@email.cz" required autoComplete="email" />
       </div>
       <div className="form-group">
         <label className="form-label" htmlFor="password">Heslo</label>
